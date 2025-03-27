@@ -545,7 +545,7 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
   public void exitLiteral(tinyRustParser.LiteralContext ctx) {
     rustTree.put(ctx, ctx.LITERAL().getText());
   }
-  
+
   @Override
   public void exitId(tinyRustParser.IdContext ctx) {
     rustTree.put(ctx, ctx.ID().getText());
