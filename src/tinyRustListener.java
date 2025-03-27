@@ -22,14 +22,14 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
 
   private static StringBuilder program; // 전체 프로그램의 흐름을 담는 변수
   private static FileWriter fw; // 결과를 파일에 작성하는 함수
-  static HashMap<String, Integer> localVarTable; // 지역 변수와 인덱스를 매핑하여 저장하는 hashMap
-  static HashMap<String, String> funcTable; // 함수명과 함수 정보를 매핑하여 저장하는 hashMap
   static char return_type = 'v'; // 함수의 반환 타입, void ? 'v' : 'i'
   static int localVar_curIdx; // 지역 변수의 인덱스
   static int ifLabelCnt;
   static int loopLabelCnt;
-  private Map<ParserRuleContext, Integer> labelTable;
-  private Map<String, String> jmpOpTable; // 각 조건 분기문에 대응하는 명령어를 모아놓은 hashMap
+  static Map<String, Integer> localVarTable; // 지역 변수와 인덱스를 매핑하여 저장하는 hashMap
+  static Map<String, String> funcTable; // 함수명과 함수 정보를 매핑하여 저장하는 hashMap
+  private Map<ParserRuleContext, Integer> labelTable; // 현재 context와 label count를 매핑하여 저장하는 hashMap
+  private Map<String, String> jmpOpTable; // 각 조건 분기문에 대응하는 명령어를 모아놓은 hashMap, 반대 명령어와 서로 매핑
 
 
   // 지역 변수 선언을 처리하는 함수
@@ -69,6 +69,7 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     labelTable = new HashMap<>();
     jmpOpTable = new HashMap<>();
 
+    // jmpOpTable에 각각에 대응되는 조건 분기 명령어 쌍을 추가
     jmpOpTable.put("if_icmpne", "if_icmpeq ");
     jmpOpTable.put("if_icmpeq", "if_icmpne ");
     jmpOpTable.put("if_icmple", "if_icmpgt ");
@@ -82,6 +83,7 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
           throw new Exception("파일 생성 실패");
       }
 
+      // main 함수의 정보는 고정적이므로 하드 코딩으로 작성
       fw = new FileWriter(output);
       fw.write("""
                     .class public Main
